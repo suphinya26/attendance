@@ -14,28 +14,36 @@ const app = express();
 app.use(express.json());
 
 app.use((req, res, next) => {
-  // 💡 อนุญาต Origin ที่ถูกต้อง และ HTTPS
+  // 1. กำหนด Origin ที่อนุญาต
   const allowedOrigins = [
+    // 🔑 ใช้ HTTPS:// สำหรับ Vercel เสมอ
     "https://attendance-34i1b5u1b-suphinyas-projects.vercel.app",
     "http://localhost:5173",
   ];
   const origin = req.headers.origin;
 
+  // 2. ตรวจสอบและ Set Header Access-Control-Allow-Origin
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
+  // ถ้าคุณต้องการอนุญาตทุก Origin ใน Production ชั่วคราว:
+  // res.setHeader('Access-Control-Allow-Origin', '*');
 
-  // ตั้งค่า Header ที่จำเป็นอื่นๆ สำหรับ Preflight
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header(
+  // 3. กำหนด Header อื่น ๆ ที่จำเป็นสำหรับ CORS
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
 
-  // สำหรับ OPTIONS request (Preflight) ให้ส่ง 200/204 กลับไปทันที
+  // 4. จัดการ OPTIONS Request (Preflight) ให้ถูกต้อง
   if (req.method === "OPTIONS") {
-    return res.sendStatus(200); // 💡 ปิด CORS ด้วยตัวเอง
+    // ส่ง 200/204 กลับไปทันที เพื่อให้เบราว์เซอร์อนุญาตการเรียกจริง
+    return res.sendStatus(200);
   }
 
   next();
