@@ -1,10 +1,10 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const { createClient } = require("@supabase/supabase-js");
-const prisma = require("../../prisma/client");
-const dotenv = require("dotenv");
+import express from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import multer from "multer";
+import { createClient } from "@supabase/supabase-js";
+import prisma from "../../prisma/client.js";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -128,7 +128,7 @@ router.post("/login", async (req, res) => {
 /**
  * 🟩 Middleware ตรวจ token
  */
-const authenticate = (req, res, next) => {
+export const authenticate = (req, res, next) => {
   // <-- Removed 'export'
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "Unauthorized" });
@@ -164,4 +164,4 @@ router.get("/me", authenticate, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

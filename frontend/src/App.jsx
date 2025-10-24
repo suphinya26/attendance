@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import AdminPage from "./pages/AdminPage";
+import AdminLocations from "./pages/AdminLocations";
 
 function PrivateRoute({ children, roles }) {
   const token = localStorage.getItem("token");
@@ -63,6 +64,14 @@ export default function App() {
         />
 
         <Route path="/admin" element={<AdminPage />} />
+        <Route
+          path="/admin/locations"
+          element={
+            <PrivateRoute roles={["admin"]}>
+              <AdminLocations />
+            </PrivateRoute>
+          }
+        />
 
         <Route path="*" element={<Navigate to="/attendance" />} />
       </Routes>

@@ -1,5 +1,6 @@
-const express = require("express");
-const prisma = require("../../prisma/client");
+import express from "express";
+import prisma from "../../prisma/client.js";
+
 const router = express.Router();
 
 // เพิ่มสถานที่
@@ -21,4 +22,4 @@ router.get("/", async (req, res) => {
   res.json(locations);
 });
 
-module.exports = router;
+export default router;

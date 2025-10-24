@@ -1,11 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
-const userRoutes = require("./src/routes/userRoutes.js");
-const locationRoutes = require("./src/routes/locationRoutes.js");
-const attendanceRoutes = require("./src/routes/attendanceRoutes.js");
-const uploadRoutes = require("./src/routes/uploadRoutes.js");
+import userRoutes from "./src/routes/userRoutes.js";
+import locationRoutes from "./src/routes/locationRoutes.js";
+import attendanceRoutes from "./src/routes/attendanceRoutes.js";
+import uploadRoutes from "./src/routes/uploadRoutes.js";
+import adminRoutes from "./src/routes/adminRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => res.send("✅ Attendance API is running"));
 

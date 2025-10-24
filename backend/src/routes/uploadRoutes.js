@@ -1,9 +1,9 @@
-const express = require("express");
-const multer = require("multer");
-const jwt = require("jsonwebtoken");
-const { createClient } = require("@supabase/supabase-js");
-const prisma = require("../../prisma/client");
-const dotenv = require("dotenv");
+import express from "express";
+import multer from "multer";
+import jwt from "jsonwebtoken";
+import { createClient } from "@supabase/supabase-js";
+import prisma from "../../prisma/client.js";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 // ✅ สร้าง Supabase client
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 // ✅ Middleware ตรวจ Token
@@ -72,4 +72,4 @@ router.post("/face", authenticate, upload.single("face"), async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

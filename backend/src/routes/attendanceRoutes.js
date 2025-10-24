@@ -1,6 +1,6 @@
-const express = require("express");
-const prisma = require("../../prisma/client");
-const jwt = require("jsonwebtoken");
+import express from "express";
+import prisma from "../../prisma/client.js";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -36,36 +36,62 @@ router.post("/", authenticate, async (req, res) => {
     const { checkType, sessionType, latitude, longitude, locationId } =
       req.body;
 
-    // ตรวจว่าผู้ใช้ลงภายในรัศมีไหม
+    // 1. ตรวจสอบว่า locationId มีจริง
     const location = await prisma.location.findUnique({
-      where: { id: locationId },
+      where: { id: parseInt(locationId) }, // 💡 ให้แน่ใจว่า id เป็น Int
     });
+
+    // 💡 เพิ่มการจัดการถ้าไม่พบสถานที่
+    if (!location) {
+      return res.status(404).json({ error: "Location ID not found." });
+    }
+
+    // 2. แปลง Lat/Lon เป็นตัวเลขเพื่อความปลอดภัย
+    const lat = parseFloat(latitude);
+    const lon = parseFloat(longitude);
+
+    if (isNaN(lat) || isNaN(lon)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid latitude or longitude format." });
+    }
+
+    // 3. คำนวณระยะทาง
     const distance = calcDistance(
-      latitude,
-      longitude,
+      lat,
+      lon,
       location.latitude,
       location.longitude
     );
 
+    // 4. ตรวจสอบรัศมี
     if (distance > location.radius) {
-      return res.status(400).json({ error: "Outside allowed area" });
+      // 💡 คืนค่า 403 Forbidden หรือ 400 ตามความเหมาะสม และให้ข้อมูลชัดเจน
+      return res.status(403).json({
+        error: "Outside allowed area",
+        distance: distance.toFixed(2), // แสดงระยะทาง
+        allowedRadius: location.radius,
+      });
     }
 
+    // 5. สร้าง Record
     const record = await prisma.attendance.create({
       data: {
         userId: req.userId,
-        locationId,
+        locationId: parseInt(locationId),
         checkType,
         sessionType,
-        latitude,
-        longitude,
-        verified: true, // สมมติว่ายืนยันใบหน้าแล้ว
+        latitude: lat,
+        longitude: lon,
+        verified: true,
       },
     });
 
     res.json({ message: "Attendance recorded", record });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    // 💡 ในกรณีเกิด Error อื่นๆ ที่ไม่คาดคิด (เช่น DB Error)
+    console.error("Attendance Post Error:", err.message);
+    res.status(500).json({ error: "Internal server error: " + err.message });
   }
 });
 
@@ -83,4 +109,4 @@ router.get("/history", authenticate, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
