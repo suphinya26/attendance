@@ -13,7 +13,8 @@ const app = express();
 
 app.use(express.json());
 
-// ✅ ตั้งค่า CORS ให้อนุญาต Vercel Domain
+app.options("*", cors());
+
 app.use(
   cors({
     origin: [
