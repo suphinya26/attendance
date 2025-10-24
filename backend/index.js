@@ -11,8 +11,19 @@ import adminRoutes from "./src/routes/adminRoutes.js";
 dotenv.config();
 const app = express();
 
-app.use(cors());
 app.use(express.json());
+
+// ✅ ตั้งค่า CORS ให้อนุญาต Vercel Domain
+app.use(
+  cors({
+    origin: [
+      "https://attendance-im5k0ppt3-suphinyas-projects.vercel.app",
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use("/api/users", userRoutes);
 app.use("/api/locations", locationRoutes);

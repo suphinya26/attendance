@@ -1,12 +1,16 @@
+// src/utils/axiosInstance.js
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || "http://localhost:4000/api",
+  baseURL: import.meta.env.VITE_API_BASE, // ✅ อย่าเติม "/api" ต่อท้าย
+  withCredentials: false,
 });
 
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
