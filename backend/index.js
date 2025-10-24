@@ -18,6 +18,7 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     // 🔑 ใช้ HTTPS:// สำหรับ Vercel เสมอ
     "https://attendance-34i1b5u1b-suphinyas-projects.vercel.app",
+    "https://attendance-gamma-nine.vercel.app",
     "http://localhost:5173",
   ];
   const origin = req.headers.origin;
