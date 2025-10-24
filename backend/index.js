@@ -13,16 +13,44 @@ const app = express();
 
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: [
-      "https://attendance-34i1b5u1b-suphinyas-projects.vercel.app",
-      "http://localhost:5173",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use((req, res, next) => {
+  // 💡 อนุญาต Origin ที่ถูกต้อง และ HTTPS
+  const allowedOrigins = [
+    "https://attendance-34i1b5u1b-suphinyas-projects.vercel.app",
+    "http://localhost:5173",
+  ];
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  // ตั้งค่า Header ที่จำเป็นอื่นๆ สำหรับ Preflight
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+
+  // สำหรับ OPTIONS request (Preflight) ให้ส่ง 200/204 กลับไปทันที
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200); // 💡 ปิด CORS ด้วยตัวเอง
+  }
+
+  next();
+});
+
+// app.use(
+//   cors({
+//     origin: [
+//       "https://attendance-34i1b5u1b-suphinyas-projects.vercel.app",
+//       "http://localhost:5173",
+//     ],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
 
 app.use("/api/users", userRoutes);
 app.use("/api/locations", locationRoutes);
