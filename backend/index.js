@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-      "https://attendance-im5k0ppt3-suphinyas-projects.vercel.app",
+      "https://attendance-nr7yv4cbs-suphinyas-projects.vercel.app",
       "http://localhost:5173",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
